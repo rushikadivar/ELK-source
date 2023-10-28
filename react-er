@@ -1,0 +1,16 @@
+setInProgress(true);
+    
+    try {
+        const fileList = await fetch(`http://aiws1:8081/chatbot/showsources?collection_name=${collectionName}`, { method: "POST" });
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const value = await fileList.json();
+        setIndexFiles(value);
+        setShowIndexedFile(true);
+        console.log(showIndexedFile);
+        setSelectedCollectionIndexFiles(indexFiles, collectionName);
+    } catch (error) {
+        // Handle any errors here
+    } finally {
+        setInProgress(false);
+    }
