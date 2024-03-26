@@ -15,7 +15,26 @@ setInProgress(true);
         setInProgress(false);
     }
 
-
+try (
+            // Establishing a connection to the database
+            Connection connection = DriverManager.getConnection(url, user, password);
+            // Retrieving stored procedure definition
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("EXEC sp_helptext '" + storedProcedureName + "'");
+        ) {
+            // Processing the result set
+            while (resultSet.next()) {
+                String line = resultSet.getString(1);
+                // Assuming the table name is mentioned in the stored procedure definition
+                // You may need to adjust this logic based on how your stored procedures are written
+                if (line.contains("YourTableName")) { // Replace with your table name
+                    System.out.println("Table name found in stored procedure: " + line);
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
 
 
