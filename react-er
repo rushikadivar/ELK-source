@@ -67,4 +67,66 @@ try (
 https://youtu.be/GurZKf5M154?si=phTq2x0sMNIkXZB9
 
 
-I've few technologies that we have developed last year. And want to represent all these technologies as a tree form in my upcoming rangoli competition. So can you generate any good art of tree that represents all these technologies as a branch. It's just art rangoli.
+public static void main(String[] args) {
+        // JDBC URL, username, and password of the SQL Server database
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=YourDatabaseName";
+        String user = "YourUsername";
+        String password = "YourPassword";
+
+        // Path to your CSV file
+        String csvFilePath = "path/to/your/csv/file.csv";
+
+        try (
+            // Establishing a connection to the database
+            Connection connection = DriverManager.getConnection(url, user, password);
+            // Creating a prepared statement for inserting data
+            PreparedStatement preparedStatement = connection.prepareStatement(generateInsertQuery("YourTableName", getCSVColumnNames(csvFilePath)));
+            // Creating a reader for the CSV file
+            Reader reader = new FileReader(csvFilePath);
+            // Parsing the CSV file
+            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
+        ) {
+            // Iterating over each record in the CSV file
+            for (CSVRecord csvRecord : csvParser) {
+                // Inserting data into the table
+                for (int i = 0; i < csvRecord.size(); i++) {
+                    preparedStatement.setString(i + 1, csvRecord.get(i));
+                }
+                preparedStatement.executeUpdate();
+            }
+            System.out.println("Data inserted successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Method to generate the SQL INSERT query dynamically based on column names
+    private static String generateInsertQuery(String tableName, List<String> columnNames) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("INSERT INTO ").append(tableName).append(" (");
+        for (int i = 0; i < columnNames.size(); i++) {
+            queryBuilder.append(columnNames.get(i));
+            if (i < columnNames.size() - 1) {
+                queryBuilder.append(", ");
+            }
+        }
+        queryBuilder.append(") VALUES (");
+        for (int i = 0; i < columnNames.size(); i++) {
+            queryBuilder.append("?");
+            if (i < columnNames.size() - 1) {
+                queryBuilder.append(", ");
+            }
+        }
+        queryBuilder.append(")");
+        return queryBuilder.toString();
+    }
+
+    // Method to extract column names from the first row of the CSV file
+    private static List<String> getCSVColumnNames(String csvFilePath) throws Exception {
+        Reader reader = new FileReader(csvFilePath);
+        CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
+        List<String> columnNames = new ArrayList<>(csvParser.getHeaderMap().keySet());
+        reader.close();
+        csvParser.close();
+        return columnNames;
+    }
