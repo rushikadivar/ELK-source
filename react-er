@@ -145,3 +145,21 @@ List<String> columnNames = new ArrayList<>();
         }
         fis.close();
         return columnNames;
+
+
+
+
+ // Getting the first sheet from the workbook
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // Iterating over each row in the sheet
+            Iterator<Row> rowIterator = sheet.iterator();
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                if (row.getRowNum() == 0) continue; // Skip the header row
+                // Inserting data into the table
+                for (int i = 0; i < row.getLastCellNum(); i++) {
+                    preparedStatement.setString(i + 1, row.getCell(i).getStringCellValue());
+                }
+                preparedStatement.executeUpdate();
+            }
