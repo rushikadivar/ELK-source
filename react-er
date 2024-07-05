@@ -169,3 +169,133 @@ List<String> columnNames = new ArrayList<>();
                 FileInputStream fis = new FileInputStream(new File(excelFilePath));
                 // Creating a workbook instance from the Excel file
                 Workbook workbook = WorkbookFactory.create(fis);
+
+
+
+
+
+
+
+
+
+import com.azure.identity.ClientSecretCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
+import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+
+public class KeyVaultExample {
+    public static void main(String[] args) {
+        // Replace with your Key Vault and Azure AD details
+        String keyVaultName = "your-key-vault-name";
+        String keyVaultUrl = "https://" + keyVaultName + ".vault.azure.net";
+        String tenantId = "your-tenant-id";
+        String clientId = "your-client-id";
+        String clientSecret = "your-client-secret";
+        
+        // Authenticate with Azure AD
+        ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
+                .tenantId(tenantId)
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .build();
+
+        // Create a SecretClient
+        SecretClient secretClient = new SecretClientBuilder()
+                .vaultUrl(keyVaultUrl)
+                .credential(clientSecretCredential)
+                .buildClient();
+
+        // Retrieve a secret from the Key Vault
+        KeyVaultSecret secret = secretClient.getSecret("your-secret-name");
+
+        // Use the secret
+        System.out.println("Secret Value: " + secret.getValue());
+    }
+}
+
+
+
+
+
+
+
+
+
+
+import com.azure.identity.ClientSecretCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
+import com.azure.security.keyvault.keys.KeyClient;
+import com.azure.security.keyvault.keys.KeyClientBuilder;
+import com.azure.security.keyvault.keys.cryptography.CryptographyClient;
+import com.azure.security.keyvault.keys.cryptography.CryptographyClientBuilder;
+import com.azure.security.keyvault.keys.models.KeyVaultKey;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
+public class KeyVaultEncryptionExample {
+    public static void main(String[] args) throws Exception {
+        // Replace with your Key Vault details
+        String keyVaultName = "your-key-vault-name";
+        String keyVaultUrl = "https://" + keyVaultName + ".vault.azure.net";
+        String tenantId = "your-tenant-id";
+        String clientId = "your-client-id";
+        String clientSecret = "your-client-secret";
+        String keyName = "your-encryption-key-name";
+
+        // Authenticate with Azure AD
+        ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
+                .tenantId(tenantId)
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .build();
+
+        // Create a KeyClient
+        KeyClient keyClient = new KeyClientBuilder()
+                .vaultUrl(keyVaultUrl)
+                .credential(clientSecretCredential)
+                .buildClient();
+
+        // Retrieve the encryption key from Key Vault
+        KeyVaultKey keyVaultKey = keyClient.getKey(keyName);
+
+        // Extract the key bytes (assuming it's a symmetric key)
+        byte[] keyBytes = Base64.getDecoder().decode(keyVaultKey.getKey().toString());
+
+        // Create a SecretKeySpec
+        SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
+
+        // Data to be encrypted
+        String data = "Hello, this is a secret message!";
+
+        // Perform encryption
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] encryptedData = cipher.doFinal(data.getBytes());
+
+        // Print encrypted data
+        System.out.println("Encrypted Data: " + Base64.getEncoder().encodeToString(encryptedData));
+
+        // Perform decryption
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        byte[] decryptedData = cipher.doFinal(encryptedData);
+
+        // Print decrypted data
+        System.out.println("Decrypted Data: " + new String(decryptedData));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
