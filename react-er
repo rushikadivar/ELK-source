@@ -358,3 +358,63 @@ namespace KeyVaultEncryptionExample
 
 
 
+
+
+
+
+
+
+
+
+using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+class Program
+{
+    private const int ChunkSize = 4096; // Size of each chunk (4 KB in this case)
+
+    static async Task Main(string[] args)
+    {
+        string filePath = "path/to/your/file.txt";
+        string outputPath = "path/to/your/outputFile.txt";
+
+        await ProcessFileInChunks(filePath, outputPath);
+    }
+
+    static async Task ProcessFileInChunks(string inputFile, string outputFile)
+    {
+        using (FileStream inputStream = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
+        using (FileStream outputStream = new FileStream(outputFile, FileMode.Create, FileAccess.Write))
+        {
+            byte[] buffer = new byte[ChunkSize];
+            int bytesRead;
+
+            while ((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                // Perform your operation on the chunk
+                byte[] processedChunk = PerformOperationOnChunk(buffer, bytesRead);
+
+                // Write the processed chunk to the output file
+                await outputStream.WriteAsync(processedChunk, 0, processedChunk.Length);
+            }
+        }
+    }
+
+    static byte[] PerformOperationOnChunk(byte[] chunk, int bytesRead)
+    {
+        // Example operation: Encrypting the chunk (this is just a simple example, not actual encryption)
+        // In a real scenario, you might want to use a proper encryption algorithm like AES
+        byte[] result = new byte[bytesRead];
+        for (int i = 0; i < bytesRead; i++)
+        {
+            result[i] = (byte)(chunk[i] ^ 0x5A); // XOR operation with 0x5A as a simple example
+        }
+        return result;
+    }
+}
+
+
+
