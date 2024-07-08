@@ -309,3 +309,52 @@ public class KeyVaultEncryptionExample {
 
 
 
+
+
+
+
+using System;
+using System.Threading.Tasks;
+using Azure.Identity;
+using Azure.Security.KeyVault.Keys;
+using Azure.Security.KeyVault.Keys.Cryptography;
+
+namespace KeyVaultEncryptionExample
+{
+    class Program
+    {
+        private static readonly string keyVaultUrl = "https://<YourKeyVaultName>.vault.azure.net/";
+        private static readonly string keyName = "<YourKeyName>";
+
+        static async Task Main(string[] args)
+        {
+            // Authenticate using DefaultAzureCredential
+            var credential = new DefaultAzureCredential();
+
+            // Create a KeyClient to interact with Key Vault
+            var keyClient = new KeyClient(new Uri(keyVaultUrl), credential);
+
+            // Retrieve the key from Key Vault
+            KeyVaultKey key = await keyClient.GetKeyAsync(keyName);
+
+            // Create a CryptographyClient for encryption and decryption operations
+            var cryptoClient = new CryptographyClient(key.Id, credential);
+
+            // Data to be encrypted
+            byte[] dataToEncrypt = System.Text.Encoding.UTF8.GetBytes("Hello, World!");
+
+            // Encrypt the data
+            EncryptResult encryptResult = await cryptoClient.EncryptAsync(EncryptionAlgorithm.RsaOaep, dataToEncrypt);
+            byte[] encryptedData = encryptResult.Ciphertext;
+            Console.WriteLine("Encrypted data: " + Convert.ToBase64String(encryptedData));
+
+            // Decrypt the data
+            DecryptResult decryptResult = await cryptoClient.DecryptAsync(EncryptionAlgorithm.RsaOaep, encryptedData);
+            byte[] decryptedData = decryptResult.Plaintext;
+            Console.WriteLine("Decrypted data: " + System.Text.Encoding.UTF8.GetString(decryptedData));
+        }
+    }
+}
+
+
+
