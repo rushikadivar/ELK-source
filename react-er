@@ -529,3 +529,37 @@ class Program
 }
 
 
+
+
+
+
+
+
+
+import os
+import sys
+from transformers import AutoModel, AutoTokenizer
+
+# Function to get the correct path when running as an executable
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for PyInstaller. """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+# The relative path to the model inside the _internals folder
+model_path = resource_path("_internals/model")
+
+# Load the model and tokenizer from the local path
+model = AutoModel.from_pretrained(model_path)
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+
+# Example of tokenizing and running the model
+inputs = tokenizer("Hello, world!", return_tensors="pt")
+outputs = model(**inputs)
+
+print(outputs)
