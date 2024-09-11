@@ -563,3 +563,13 @@ inputs = tokenizer("Hello, world!", return_tensors="pt")
 outputs = model(**inputs)
 
 print(outputs)
+\
+
+
+
+
+ZonedDateTime utcDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+
+        // Format the UTC date if needed (optional)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = utcDateTime.format(formatter);
