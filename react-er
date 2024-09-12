@@ -573,3 +573,61 @@ ZonedDateTime utcDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         // Format the UTC date if needed (optional)
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDate = utcDateTime.format(formatter);
+
+
+
+
+
+
+
+4. Prerequisites
+Before: 
+Knovos Assistant - The recommended total size is 17GB (Knovos Assistant – 6GB, Knovos AssistantModel Size – 8GB, and Additional Buffer Size – 3GB
+Updated:
+Knovos Assistant - The recommended total size is 22GB (Knovos Assistant – 5GB, Knovos AssistantModel Size – 17GB, and Additional Buffer Size – 3GB
+
+5. AI API Installation Process
+The AI Assistant Project contains the following files/folders
+Before:
+•	KnovosAssistantModels 
+•	KnovosAssistant.Zip 
+•	Run_knovos_assistant.bat 
+•	Stop_knovos_assistant.bat
+
+Updated:
+•	KnovosAssistant.Zip 
+o	KnovosAssistant source and all it’s dependencies
+o	Scripts (It includes the service installation executable: for refenerence)
+o	Run_knovos_assistant.bat 
+o	Stop_knovos_assistant.bat
+
+Extract the KnovosAssistantZip folder:
+
+Before:
+After the folder is extracted, locate the Venv folder. In the venv folder, open the pyvenv.cfg file in the text editor and replace the path mentioned below with the path where you have installed Python: %PYTHON_PATH%
+
+Update:
+No need to perform this step
+
+Edit the run_knovos_assistant.bat file:
+Before:
+Update the Gradio_Temp_Dir location path, preferably to a shared path location. This is where all temporary files will be stored, which may require more memory, hence it is recommended to use a shared path location to avoid consuming excessive amounts of system resources
+
+
+Update:
+No need to perform this step
+
+Edit the run_knovos_assistant.bat file
+Before:
+Update the Gradio_Temp_Dir location path, preferably to a shared path location. This is where all temporary files will be stored, which may require more memory, hence it is recommended to use a shared path location to avoid consuming excessive amounts of system resources
+After:
+Remove this line as it’s required in current flow
+
+5.2 Add AI Assistant URL in Knovos Rooms
+In order to setup the AI-Assitant URL the current URL differs by few endpoints.
+Let’s clearify those endpoints:
+Before:
+https://ai-api.Parker.com:8443/ai-assistant
+Updated:
+https://ai-api.Parker.com:8443
+No longer need to explicitly include /ai-assistant endpoint at the end
