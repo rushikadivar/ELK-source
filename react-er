@@ -645,3 +645,8 @@ Changes in AI Assistant URL configuration, with updated endpoint requirements.
 Please note that detailed instructions for updating the service installation executable and related scripts are not covered in this document. These instructions will be provided in a separate, detailed guide to ensure proper setup and configuration of the service.
 
 The purpose of this document is to ensure a smooth installation and setup process by reflecting the latest changes and simplifying previous configurations. For a complete understanding of the service installation flow using the provided scripts, please refer to the forthcoming detailed guide.
+
+
+Please note that detailed instructions for updating the service installation executable and related scripts are not included in this document. This aspect of the installation is out of the scope for user steps; users will only need to specify the service name. All other configuration and installation details will be handled internally by the provided scripts.
+
+The purpose of this document is to ensure a smooth installation and setup process by reflecting the latest changes and simplifying previous configurations. For comprehensive guidance on the service installation flow, including script-related details, please refer to the forthcoming detailed guide
