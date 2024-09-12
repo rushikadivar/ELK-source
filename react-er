@@ -631,3 +631,17 @@ https://ai-api.Parker.com:8443/ai-assistant
 Updated:
 https://ai-api.Parker.com:8443
 No longer need to explicitly include /ai-assistant endpoint at the end
+
+
+
+Summary
+This document outlines the updated procedures and requirements for installing and configuring the AI Assistant project as a Windows service. It includes:
+
+Prerequisites: Detailed information on the updated recommended storage size and components required for the installation.
+Installation Process: An overview of the installation process, including:
+Updated folder structure and file contents.
+Simplified installation steps with removal of previous configuration requirements.
+Changes in AI Assistant URL configuration, with updated endpoint requirements.
+Please note that detailed instructions for updating the service installation executable and related scripts are not covered in this document. These instructions will be provided in a separate, detailed guide to ensure proper setup and configuration of the service.
+
+The purpose of this document is to ensure a smooth installation and setup process by reflecting the latest changes and simplifying previous configurations. For a complete understanding of the service installation flow using the provided scripts, please refer to the forthcoming detailed guide.
