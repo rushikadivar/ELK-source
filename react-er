@@ -649,4 +649,13 @@ The purpose of this document is to ensure a smooth installation and setup proces
 
 Please note that detailed instructions for updating the service installation executable and related scripts are not included in this document. This aspect of the installation is out of the scope for user steps; users will only need to specify the service name. All other configuration and installation details will be handled internally by the provided scripts.
 
-The purpose of this document is to ensure a smooth installation and setup process by reflecting the latest changes and simplifying previous configurations. For comprehensive guidance on the service installation flow, including script-related details, please refer to the forthcoming detailed guide
+The 
+
+This is what we are looking at
+
+http://www.directpluspro.compaq.com/printconfig.asp? bi-E9CED&depqsid=1DMLAVWF98592G2N00AKHB60TV7UASHF&BEID-19701
+
+We are planning to purchase two of these (identical of course). We plan to have one mirror the other so the we can balance the load, and also that (in the event of a problem) one can function independent of the other... the idea the we can literally shut one down without the web site going down is exciting... also, being able to upgrade by simply slapping in a new "pizza box" is quite intriguing...
+
+
+purpose of this document is to ensure a smooth installation and setup process by reflecting the latest changes and simplifying previous configurations. For comprehensive guidance on the service installation flow, including script-related details, please refer to the forthcoming detailed guide
