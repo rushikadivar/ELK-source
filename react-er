@@ -664,3 +664,48 @@ We are planning to purchase two of these (identical of course). We plan to have 
 
 
 purpose of this document is to ensure a smooth installation and setup process by reflecting the latest changes and simplifying previous configurations. For comprehensive guidance on the service installation flow, including script-related details, please refer to the forthcoming detailed guide
+
+
+
+
+
+
+
+# Define your static credentials
+$username = "yourusername@yourtenant.com"
+$password = "yourpassword"
+
+# Create the PSCredential object
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+$creds = New-Object System.Management.Automation.PSCredential ($username, $securePassword)
+
+# Connect to SharePoint Online using PnP PowerShell and the static credentials
+$siteUrl = "https://yourtenantname.sharepoint.com/sites/yoursite"
+Connect-PnPOnline -Url $siteUrl -Credentials $creds
+
+# Access the Preservation Hold Library (you might want to specify the correct name if it's different)
+$preservationHoldLibrary = Get-PnPList -Identity "Preservation Hold Library"
+
+# Define the file you want to retrieve
+$fileName = "YourFileName.ext"  # Specify the file name you're interested in
+
+# Get the specific file from the Preservation Hold Library
+$file = Get-PnPListItem -List $preservationHoldLibrary | Where-Object { $_["FileLeafRef"] -eq $fileName }
+
+# Print details about the file (metadata)
+if ($file) {
+    Write-Host "File Name: $($file['FileLeafRef'])"
+    Write-Host "File Title: $($file['Title'])"
+    Write-Host "Modified: $($file['Modified'])"
+    Write-Host "File Size: $($file['File_x0020_Size']) bytes"
+} else {
+    Write-Host "File not found in Preservation Hold Library."
+}
+
+# Optionally, print the file content (as text) - for files that can be interpreted as text (like .txt or .log files)
+$fileContent = Get-PnPFile -ServerRelativeUrl $file["FileRef"] -AsString -Force
+Write-Host "File Content: $fileContent"
+
+# Disconnect from SharePoint
+Disconnect-PnPOnline
+
