@@ -1,3 +1,59 @@
+# Define your static credentials
+$username = "yourusername@yourtenant.com"
+$password = "yourpassword"
+
+# Create the PSCredential object
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+$creds = New-Object System.Management.Automation.PSCredential ($username, $securePassword)
+
+# Connect to SharePoint Online using PnP PowerShell and the static credentials
+$siteUrl = "https://yourtenantname.sharepoint.com/sites/yoursite"
+Connect-PnPOnline -Url $siteUrl -Credentials $creds
+
+# Access the Preservation Hold Library (you might want to specify the correct name if it's different)
+$preservationHoldLibrary = Get-PnPList -Identity "Preservation Hold Library"
+
+# Define the file you want to retrieve
+$fileName = "YourFileName.ext"  # Specify the file name you're interested in
+
+# Get the specific item from the Preservation Hold Library
+$fileItem = Get-PnPListItem -List $preservationHoldLibrary | Where-Object { $_["FileLeafRef"] -eq $fileName }
+
+# Check if the file item exists
+if ($fileItem) {
+    # Get the FileRef property (the server-relative URL)
+    $fileRef = $fileItem["FileRef"]
+    $fileLeafRef = $fileItem["FileLeafRef"]
+    $fileTitle = $fileItem["Title"]
+    $fileModified = $fileItem["Modified"]
+    $fileSize = $fileItem["File_x0020_Size"]
+
+    Write-Host "File Name: $fileLeafRef"
+    Write-Host "Title: $fileTitle"
+    Write-Host "Modified: $fileModified"
+    Write-Host "Size: $fileSize bytes"
+    
+    # Get file content if it's a text-based file (e.g., .txt)
+    try {
+        $fileContent = Get-PnPFile -ServerRelativeUrl $fileRef -AsString -Force
+        Write-Host "File Content: $fileContent"
+    } catch {
+        Write-Host "The file is not a text-based file or could not be retrieved."
+    }
+} else {
+    Write-Host "File not found in Preservation Hold Library."
+}
+
+# Disconnect from SharePoint
+Disconnect-PnPOnline
+
+
+
+
+
+
+
+
 sk-ant-api03-QyANTavEZAihv4kvubyi19b7ekuzn_LTKMurJt3tyQZNIzM-ARRlD9uKRPrNdKJHEzb4YhCHUYPa69AON6JoDw
 
 
