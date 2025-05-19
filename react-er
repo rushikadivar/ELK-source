@@ -765,3 +765,120 @@ Write-Host "File Content: $fileContent"
 # Disconnect from SharePoint
 Disconnect-PnPOnline
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------
+import asyncio
+import httpx
+import time
+from statistics import mean, stdev
+
+# Configuration
+URL = "http://localhost:8000/simulate"
+TOTAL_REQUESTS = 50
+CONCURRENT_CLIENTS = 20
+
+# Tracking
+response_times = []
+success_count = 0
+fail_count = 0
+
+
+async def fetch(client, url, idx):
+    global success_count, fail_count
+    try:
+        start = time.perf_counter()
+        response = await client.get(url)
+        duration = time.perf_counter() - start
+        response_times.append(duration)
+
+        if response.status_code == 200:
+            success_count += 1
+        else:
+            fail_count += 1
+    except Exception as e:
+        fail_count += 1
+
+
+async def run_load_test():
+    connector_limits = httpx.Limits(max_connections=CONCURRENT_CLIENTS)
+    async with httpx.AsyncClient(limits=connector_limits, timeout=15.0) as client:
+        tasks = [fetch(client, URL, i) for i in range(TOTAL_REQUESTS)]
+        await asyncio.gather(*tasks)
+
+
+def print_summary():
+    print("\n=== Load Test Summary ===")
+    print(f"URL: {URL}")
+    print(f"Total Requests: {TOTAL_REQUESTS}")
+    print(f"Concurrent Clients: {CONCURRENT_CLIENTS}")
+    print(f"Successful Responses: {success_count}")
+    print(f"Failed Responses: {fail_count}")
+
+    if response_times:
+        print(f"Average Response Time: {mean(response_times):.3f} seconds")
+        print(f"Min Response Time: {min(response_times):.3f} seconds")
+        print(f"Max Response Time: {max(response_times):.3f} seconds")
+        if len(response_times) > 1:
+            print(f"Standard Deviation: {stdev(response_times):.3f}")
+    print("==========================\n")
+
+
+if __name__ == "__main__":
+    start_time = time.perf_counter()
+    asyncio.run(run_load_test())
+    print_summary()
+    total_duration = time.perf_counter() - start_time
+    print(f"Total Test Duration: {total_duration:.2f} seconds\n")
+
+
+import os
+
+# Create directory for output files
+OUTPUT_DIR = "responses"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+async def fetch(client, url, idx):
+    global success_count, fail_count
+    try:
+        start = time.perf_counter()
+        response = await client.get(url)
+        duration = time.perf_counter() - start
+        response_times.append(duration)
+
+        if response.status_code == 200:
+            success_count += 1
+        else:
+            fail_count += 1
+
+        # Write response content to a file
+        filename = os.path.join(OUTPUT_DIR, f"response_{idx}.txt")
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(f"Status: {response.status_code}\n")
+            f.write(f"Duration: {duration:.3f} seconds\n")
+            f.write("Body:\n")
+            f.write(response.text)
+
+    except Exception as e:
+        fail_count += 1
+        filename = os.path.join(OUTPUT_DIR, f"response_{idx}_error.txt")
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(f"Error on request {idx}: {str(e)}\n")
+
