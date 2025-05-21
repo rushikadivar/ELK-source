@@ -118,6 +118,9 @@ if __name__ == "__main__":
 
 
 
+def chunk_text_by_lines(content: str, chunk_size: int) -> List[str]:
+    lines = content.splitlines()
+    return ['\n'.join(lines[i:i + chunk_size]) for i in range(0, len(lines), chunk_size)]
 
 
 
