@@ -924,3 +924,6 @@ export LMCACHE_CHUNK_SIZE=256
 export LMCACHE_LOCAL_CPU=True # default
 # 5GB of Pinned CPU memory
 export LMCACHE_MAX_LOCAL_CPU_SIZE=5.0 # default
+
+
+'{"kv_connector":"LMCacheConnectorV1", "kv_role":"kv_both"}'
