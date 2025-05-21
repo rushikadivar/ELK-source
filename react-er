@@ -1,886 +1,119 @@
-# Define your static credentials
-$username = "yourusername@yourtenant.com"
-$password = "yourpassword"
-
-# Create the PSCredential object
-$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
-$creds = New-Object System.Management.Automation.PSCredential ($username, $securePassword)
-
-# Connect to SharePoint Online using PnP PowerShell and the static credentials
-$siteUrl = "https://yourtenantname.sharepoint.com/sites/yoursite"
-Connect-PnPOnline -Url $siteUrl -Credentials $creds
-
-# Access the Preservation Hold Library (you might want to specify the correct name if it's different)
-$preservationHoldLibrary = Get-PnPList -Identity "Preservation Hold Library"
-
-# Define the file you want to retrieve
-$fileName = "YourFileName.ext"  # Specify the file name you're interested in
-
-# Get the specific item from the Preservation Hold Library
-$fileItem = Get-PnPListItem -List $preservationHoldLibrary | Where-Object { $_["FileLeafRef"] -eq $fileName }
-
-# Check if the file item exists
-if ($fileItem) {
-    # Get the FileRef property (the server-relative URL)
-    $fileRef = $fileItem["FileRef"]
-    $fileLeafRef = $fileItem["FileLeafRef"]
-    $fileTitle = $fileItem["Title"]
-    $fileModified = $fileItem["Modified"]
-    $fileSize = $fileItem["File_x0020_Size"]
-
-    Write-Host "File Name: $fileLeafRef"
-    Write-Host "Title: $fileTitle"
-    Write-Host "Modified: $fileModified"
-    Write-Host "Size: $fileSize bytes"
-    
-    # Get file content if it's a text-based file (e.g., .txt)
-    try {
-        $fileContent = Get-PnPFile -ServerRelativeUrl $fileRef -AsString -Force
-        Write-Host "File Content: $fileContent"
-    } catch {
-        Write-Host "The file is not a text-based file or could not be retrieved."
-    }
-} else {
-    Write-Host "File not found in Preservation Hold Library."
-}
-
-# Disconnect from SharePoint
-Disconnect-PnPOnline
-
-
-
-
-
-
-
-
-sk-ant-api03-QyANTavEZAihv4kvubyi19b7ekuzn_LTKMurJt3tyQZNIzM-ARRlD9uKRPrNdKJHEzb4YhCHUYPa69AON6JoDw
-
-
-
-
-setInProgress(true);
-    
-    try {
-        const fileList = await fetch(`http://aiws1:8081/chatbot/showsources?collection_name=${collectionName}`, { method: "POST" });
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const value = await fileList.json();
-        setIndexFiles(value);
-        setShowIndexedFile(true);
-        console.log(showIndexedFile);
-        setSelectedCollectionIndexFiles(indexFiles, collectionName);
-    } catch (error) {
-        // Handle any errors here
-    } finally {
-        setInProgress(false);
-    }
-
-try (
-            // Establishing a connection to the database
-            Connection connection = DriverManager.getConnection(url, user, password);
-            // Retrieving stored procedure definition
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("EXEC sp_helptext '" + storedProcedureName + "'");
-        ) {
-            // Processing the result set
-            while (resultSet.next()) {
-                String line = resultSet.getString(1);
-                // Assuming the table name is mentioned in the stored procedure definition
-                // You may need to adjust this logic based on how your stored procedures are written
-                if (line.contains("YourTableName")) { // Replace with your table name
-                    System.out.println("Table name found in stored procedure: " + line);
-                    break;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-
-
-
-
-{
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "type": "node",
-        "request": "launch",
-        "name": "Debug Nest Framework",
-        "runtimeExecutable": "npm",
-        "runtimeArgs": [
-          "run",
-          "start:debug",
-          "--",
-          "--inspect-brk"
-        ],
-        "autoAttachChildProcesses": true,
-        "restart": true,
-        "sourceMaps": true,
-        "stopOnEntry": false,
-        "console": "integratedTerminal",
-      }
-    ]
-  }
-
-https://youtu.be/GurZKf5M154?si=phTq2x0sMNIkXZB9
-
-
-public static void main(String[] args) {
-        // JDBC URL, username, and password of the SQL Server database
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=YourDatabaseName";
-        String user = "YourUsername";
-        String password = "YourPassword";
-
-        // Path to your CSV file
-        String csvFilePath = "path/to/your/csv/file.csv";
-
-        try (
-            // Establishing a connection to the database
-            Connection connection = DriverManager.getConnection(url, user, password);
-            // Creating a prepared statement for inserting data
-            PreparedStatement preparedStatement = connection.prepareStatement(generateInsertQuery("YourTableName", getCSVColumnNames(csvFilePath)));
-            // Creating a reader for the CSV file
-            Reader reader = new FileReader(csvFilePath);
-            // Parsing the CSV file
-            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
-        ) {
-            // Iterating over each record in the CSV file
-            for (CSVRecord csvRecord : csvParser) {
-                // Inserting data into the table
-                for (int i = 0; i < csvRecord.size(); i++) {
-                    preparedStatement.setString(i + 1, csvRecord.get(i));
-                }
-                preparedStatement.executeUpdate();
-            }
-            System.out.println("Data inserted successfully.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Method to generate the SQL INSERT query dynamically based on column names
-    private static String generateInsertQuery(String tableName, List<String> columnNames) {
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("INSERT INTO ").append(tableName).append(" (");
-        for (int i = 0; i < columnNames.size(); i++) {
-            queryBuilder.append(columnNames.get(i));
-            if (i < columnNames.size() - 1) {
-                queryBuilder.append(", ");
-            }
-        }
-        queryBuilder.append(") VALUES (");
-        for (int i = 0; i < columnNames.size(); i++) {
-            queryBuilder.append("?");
-            if (i < columnNames.size() - 1) {
-                queryBuilder.append(", ");
-            }
-        }
-        queryBuilder.append(")");
-        return queryBuilder.toString();
-    }
-
-    // Method to extract column names from the first row of the CSV file
-    private static List<String> getCSVColumnNames(String csvFilePath) throws Exception {
-        Reader reader = new FileReader(csvFilePath);
-        CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
-        List<String> columnNames = new ArrayList<>(csvParser.getHeaderMap().keySet());
-        reader.close();
-        csvParser.close();
-        return columnNames;
-    }
-
-
-
-
-List<String> columnNames = new ArrayList<>();
-        FileInputStream fis = new FileInputStream(new File(excelFilePath));
-        Workbook workbook = WorkbookFactory.create(fis);
-        Sheet sheet = workbook.getSheetAt(0);
-        Row headerRow = sheet.getRow(0);
-        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
-            Cell cell = headerRow.getCell(i);
-            columnNames.add(cell.getStringCellValue());
-        }
-        fis.close();
-        return columnNames;
-
-
-
-
- // Getting the first sheet from the workbook
-            Sheet sheet = workbook.getSheetAt(0);
-
-            // Iterating over each row in the sheet
-            Iterator<Row> rowIterator = sheet.iterator();
-            while (rowIterator.hasNext()) {
-                Row row = rowIterator.next();
-                if (row.getRowNum() == 0) continue; // Skip the header row
-                // Inserting data into the table
-                for (int i = 0; i < row.getLastCellNum(); i++) {
-                    preparedStatement.setString(i + 1, row.getCell(i).getStringCellValue());
-                }
-                preparedStatement.executeUpdate();
-            }
-
-
- // Creating a FileInputStream for the Excel file
-                FileInputStream fis = new FileInputStream(new File(excelFilePath));
-                // Creating a workbook instance from the Excel file
-                Workbook workbook = WorkbookFactory.create(fis);
-
-
-
-
-
-
-
-
-
-import com.azure.identity.ClientSecretCredential;
-import com.azure.identity.ClientSecretCredentialBuilder;
-import com.azure.security.keyvault.secrets.SecretClient;
-import com.azure.security.keyvault.secrets.SecretClientBuilder;
-import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-
-public class KeyVaultExample {
-    public static void main(String[] args) {
-        // Replace with your Key Vault and Azure AD details
-        String keyVaultName = "your-key-vault-name";
-        String keyVaultUrl = "https://" + keyVaultName + ".vault.azure.net";
-        String tenantId = "your-tenant-id";
-        String clientId = "your-client-id";
-        String clientSecret = "your-client-secret";
-        
-        // Authenticate with Azure AD
-        ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
-                .tenantId(tenantId)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .build();
-
-        // Create a SecretClient
-        SecretClient secretClient = new SecretClientBuilder()
-                .vaultUrl(keyVaultUrl)
-                .credential(clientSecretCredential)
-                .buildClient();
-
-        // Retrieve a secret from the Key Vault
-        KeyVaultSecret secret = secretClient.getSecret("your-secret-name");
-
-        // Use the secret
-        System.out.println("Secret Value: " + secret.getValue());
-    }
-}
-
-
-
-
-
-
-
-
-
-
-import com.azure.identity.ClientSecretCredential;
-import com.azure.identity.ClientSecretCredentialBuilder;
-import com.azure.security.keyvault.keys.KeyClient;
-import com.azure.security.keyvault.keys.KeyClientBuilder;
-import com.azure.security.keyvault.keys.cryptography.CryptographyClient;
-import com.azure.security.keyvault.keys.cryptography.CryptographyClientBuilder;
-import com.azure.security.keyvault.keys.models.KeyVaultKey;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
-
-public class KeyVaultEncryptionExample {
-    public static void main(String[] args) throws Exception {
-        // Replace with your Key Vault details
-        String keyVaultName = "your-key-vault-name";
-        String keyVaultUrl = "https://" + keyVaultName + ".vault.azure.net";
-        String tenantId = "your-tenant-id";
-        String clientId = "your-client-id";
-        String clientSecret = "your-client-secret";
-        String keyName = "your-encryption-key-name";
-
-        // Authenticate with Azure AD
-        ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
-                .tenantId(tenantId)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .build();
-
-        // Create a KeyClient
-        KeyClient keyClient = new KeyClientBuilder()
-                .vaultUrl(keyVaultUrl)
-                .credential(clientSecretCredential)
-                .buildClient();
-
-        // Retrieve the encryption key from Key Vault
-        KeyVaultKey keyVaultKey = keyClient.getKey(keyName);
-
-        // Extract the key bytes (assuming it's a symmetric key)
-        byte[] keyBytes = Base64.getDecoder().decode(keyVaultKey.getKey().toString());
-
-        // Create a SecretKeySpec
-        SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
-
-        // Data to be encrypted
-        String data = "Hello, this is a secret message!";
-
-        // Perform encryption
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        byte[] encryptedData = cipher.doFinal(data.getBytes());
-
-        // Print encrypted data
-        System.out.println("Encrypted Data: " + Base64.getEncoder().encodeToString(encryptedData));
-
-        // Perform decryption
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        byte[] decryptedData = cipher.doFinal(encryptedData);
-
-        // Print decrypted data
-        System.out.println("Decrypted Data: " + new String(decryptedData));
-    }
-}
-
-
-
-
-
-
-<dependency>
-    <groupId>com.azure</groupId>
-    <artifactId>azure-security-keyvault-keys</artifactId>
-    <version>4.3.2</version>
-</dependency>
-<dependency>
-    <groupId>com.azure</groupId>
-    <artifactId>azure-identity</artifactId>
-    <version>1.3.6</version>
-</dependency>
-
-
-
-
-
-
-
-
-
-using System;
-using System.Threading.Tasks;
-using Azure.Identity;
-using Azure.Security.KeyVault.Keys;
-using Azure.Security.KeyVault.Keys.Cryptography;
-
-namespace KeyVaultEncryptionExample
-{
-    class Program
-    {
-        private static readonly string keyVaultUrl = "https://<YourKeyVaultName>.vault.azure.net/";
-        private static readonly string keyName = "<YourKeyName>";
-
-        static async Task Main(string[] args)
-        {
-            // Authenticate using DefaultAzureCredential
-            var credential = new DefaultAzureCredential();
-
-            // Create a KeyClient to interact with Key Vault
-            var keyClient = new KeyClient(new Uri(keyVaultUrl), credential);
-
-            // Retrieve the key from Key Vault
-            KeyVaultKey key = await keyClient.GetKeyAsync(keyName);
-
-            // Create a CryptographyClient for encryption and decryption operations
-            var cryptoClient = new CryptographyClient(key.Id, credential);
-
-            // Data to be encrypted
-            byte[] dataToEncrypt = System.Text.Encoding.UTF8.GetBytes("Hello, World!");
-
-            // Encrypt the data
-            EncryptResult encryptResult = await cryptoClient.EncryptAsync(EncryptionAlgorithm.RsaOaep, dataToEncrypt);
-            byte[] encryptedData = encryptResult.Ciphertext;
-            Console.WriteLine("Encrypted data: " + Convert.ToBase64String(encryptedData));
-
-            // Decrypt the data
-            DecryptResult decryptResult = await cryptoClient.DecryptAsync(EncryptionAlgorithm.RsaOaep, encryptedData);
-            byte[] decryptedData = decryptResult.Plaintext;
-            Console.WriteLine("Decrypted data: " + System.Text.Encoding.UTF8.GetString(decryptedData));
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-class Program
-{
-    private const int ChunkSize = 4096; // Size of each chunk (4 KB in this case)
-
-    static async Task Main(string[] args)
-    {
-        string filePath = "path/to/your/file.txt";
-        string outputPath = "path/to/your/outputFile.txt";
-
-        await ProcessFileInChunks(filePath, outputPath);
-    }
-
-    static async Task ProcessFileInChunks(string inputFile, string outputFile)
-    {
-        using (FileStream inputStream = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
-        using (FileStream outputStream = new FileStream(outputFile, FileMode.Create, FileAccess.Write))
-        {
-            byte[] buffer = new byte[ChunkSize];
-            int bytesRead;
-
-            while ((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-            {
-                // Perform your operation on the chunk
-                byte[] processedChunk = PerformOperationOnChunk(buffer, bytesRead);
-
-                // Write the processed chunk to the output file
-                await outputStream.WriteAsync(processedChunk, 0, processedChunk.Length);
-            }
-        }
-    }
-
-    static byte[] PerformOperationOnChunk(byte[] chunk, int bytesRead)
-    {
-        // Example operation: Encrypting the chunk (this is just a simple example, not actual encryption)
-        // In a real scenario, you might want to use a proper encryption algorithm like AES
-        byte[] result = new byte[bytesRead];
-        for (int i = 0; i < bytesRead; i++)
-        {
-            result[i] = (byte)(chunk[i] ^ 0x5A); // XOR operation with 0x5A as a simple example
-        }
-        return result;
-    }
-}
-
-
-
-
-
-
-
-
-
-using Amazon;
-using Amazon.KeyManagementService;
-using Amazon.KeyManagementService.Model;
-using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-class Program
-{
-    private static readonly string kmsKeyId = "arn:aws:kms:region:account-id:key/key-id";
-    private static readonly RegionEndpoint region = RegionEndpoint.USEast1; // Change to your region
-
-    static async Task Main(string[] args)
-    {
-        var kmsClient = new AmazonKeyManagementServiceClient(region);
-
-        // Generate a data key
-        var generateDataKeyResponse = await GenerateDataKeyAsync(kmsClient, kmsKeyId);
-
-        // Encrypt data locally using the generated data key
-        string data = "Hello, World!";
-        byte[] encryptedData = EncryptDataLocally(generateDataKeyResponse.Plaintext, data);
-
-        // Write encrypted data and encrypted data key to a file
-        File.WriteAllBytes("encrypted_data.bin", encryptedData);
-        File.WriteAllBytes("encrypted_data_key.bin", generateDataKeyResponse.CiphertextBlob.ToArray());
-
-        // Read encrypted data and encrypted data key from the file
-        byte[] encryptedDataFromFile = File.ReadAllBytes("encrypted_data.bin");
-        byte[] encryptedDataKeyFromFile = File.ReadAllBytes("encrypted_data_key.bin");
-
-        // Decrypt the data key using AWS KMS
-        byte[] decryptedDataKey = await DecryptDataKeyAsync(kmsClient, encryptedDataKeyFromFile);
-
-        // Decrypt data locally using the decrypted data key
-        string decryptedData = DecryptDataLocally(decryptedDataKey, encryptedDataFromFile);
-
-        Console.WriteLine("Decrypted data: " + decryptedData);
-    }
-
-    static async Task<GenerateDataKeyResponse> GenerateDataKeyAsync(IAmazonKeyManagementService kmsClient, string keyId)
-    {
-        var request = new GenerateDataKeyRequest
-        {
-            KeyId = keyId,
-            KeySpec = DataKeySpec.AES_256
-        };
-
-        return await kmsClient.GenerateDataKeyAsync(request);
-    }
-
-    static async Task<byte[]> DecryptDataKeyAsync(IAmazonKeyManagementService kmsClient, byte[] encryptedDataKey)
-    {
-        var request = new DecryptRequest
-        {
-            CiphertextBlob = new MemoryStream(encryptedDataKey)
-        };
-
-        var response = await kmsClient.DecryptAsync(request);
-        return response.Plaintext.ToArray();
-    }
-
-    static byte[] EncryptDataLocally(byte[] dataKey, string data)
-    {
-        using (var aesAlg = Aes.Create())
-        {
-            aesAlg.Key = dataKey;
-            aesAlg.GenerateIV();
-            var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-
-            using (var msEncrypt = new MemoryStream())
-            {
-                msEncrypt.Write(aesAlg.IV, 0, aesAlg.IV.Length);
-                using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                using (var swEncrypt = new StreamWriter(csEncrypt))
-                {
-                    swEncrypt.Write(data);
-                }
-                return msEncrypt.ToArray();
-            }
-        }
-    }
-
-    static string DecryptDataLocally(byte[] dataKey, byte[] encryptedData)
-    {
-        using (var aesAlg = Aes.Create())
-        {
-            aesAlg.Key = dataKey;
-            aesAlg.IV = new byte[aesAlg.BlockSize / 8];
-            Array.Copy(encryptedData, 0, aesAlg.IV, 0, aesAlg.IV.Length);
-            var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-            using (var msDecrypt = new MemoryStream(encryptedData, aesAlg.IV.Length, encryptedData.Length - aesAlg.IV.Length))
-            using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-            using (var srDecrypt = new StreamReader(csDecrypt))
-            {
-                return srDecrypt.ReadToEnd();
-            }
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
 import os
-import sys
-from transformers import AutoModel, AutoTokenizer
+import json
+import csv
+import logging
+import requests
+from pathlib import Path
+from typing import List, Dict
 
-# Function to get the correct path when running as an executable
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for PyInstaller. """
+# ------------------- Configuration -------------------
+CHUNK_SIZE = 1000  # Number of words per chunk
+INPUT_FOLDER = "input_texts"  # Folder containing .txt files
+OUTPUT_CSV = "output.csv"
+API_ENDPOINT = "https://example.com/api/pii"  # Replace with real URL
+
+# ------------------- Logging Setup -------------------
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+
+# ------------------- Helper Functions -------------------
+
+def read_text_file(file_path: Path) -> str:
     try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except AttributeError:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
-
-# The relative path to the model inside the _internals folder
-model_path = resource_path("_internals/model")
-
-# Load the model and tokenizer from the local path
-model = AutoModel.from_pretrained(model_path)
-tokenizer = AutoTokenizer.from_pretrained(model_path)
-
-# Example of tokenizing and running the model
-inputs = tokenizer("Hello, world!", return_tensors="pt")
-outputs = model(**inputs)
-
-print(outputs)
-\
-
-
-
-
-ZonedDateTime utcDateTime = ZonedDateTime.now(ZoneOffset.UTC);
-
-        // Format the UTC date if needed (optional)
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = utcDateTime.format(formatter);
-
-
-
-
-
-
-
-4. Prerequisites
-Before: 
-Knovos Assistant - The recommended total size is 17GB (Knovos Assistant – 6GB, Knovos AssistantModel Size – 8GB, and Additional Buffer Size – 3GB
-Updated:
-Knovos Assistant - The recommended total size is 22GB (Knovos Assistant – 5GB, Knovos AssistantModel Size – 17GB, and Additional Buffer Size – 3GB
-
-5. AI API Installation Process
-The AI Assistant Project contains the following files/folders
-Before:
-•	KnovosAssistantModels 
-•	KnovosAssistant.Zip 
-•	Run_knovos_assistant.bat 
-•	Stop_knovos_assistant.bat
-
-Updated:
-•	KnovosAssistant.Zip 
-o	KnovosAssistant source and all it’s dependencies
-o	Scripts (It includes the service installation executable: for refenerence)
-o	Run_knovos_assistant.bat 
-o	Stop_knovos_assistant.bat
-
-Extract the KnovosAssistantZip folder:
-
-Before:
-After the folder is extracted, locate the Venv folder. In the venv folder, open the pyvenv.cfg file in the text editor and replace the path mentioned below with the path where you have installed Python: %PYTHON_PATH%
-
-Update:
-No need to perform this step
-
-Edit the run_knovos_assistant.bat file:
-Before:
-Update the Gradio_Temp_Dir location path, preferably to a shared path location. This is where all temporary files will be stored, which may require more memory, hence it is recommended to use a shared path location to avoid consuming excessive amounts of system resources
-
-
-Update:
-No need to perform this step
-
-Edit the run_knovos_assistant.bat file
-Before:
-Update the Gradio_Temp_Dir location path, preferably to a shared path location. This is where all temporary files will be stored, which may require more memory, hence it is recommended to use a shared path location to avoid consuming excessive amounts of system resources
-After:
-Remove this line as it’s required in current flow
-
-5.2 Add AI Assistant URL in Knovos Rooms
-In order to setup the AI-Assitant URL the current URL differs by few endpoints.
-Let’s clearify those endpoints:
-Before:
-https://ai-api.Parker.com:8443/ai-assistant
-Updated:
-https://ai-api.Parker.com:8443
-No longer need to explicitly include /ai-assistant endpoint at the end
-
-
-
-Summary
-This document outlines the updated procedures and requirements for installing and configuring the AI Assistant project as a Windows service. It includes:
-
-Prerequisites: Detailed information on the updated recommended storage size and components required for the installation.
-Installation Process: An overview of the installation process, including:
-Updated folder structure and file contents.
-Simplified installation steps with removal of previous configuration requirements.
-Changes in AI Assistant URL configuration, with updated endpoint requirements.
-Please note that detailed instructions for updating the service installation executable and related scripts are not covered in this document. These instructions will be provided in a separate, detailed guide to ensure proper setup and configuration of the service.
-
-The purpose of this document is to ensure a smooth installation and setup process by reflecting the latest changes and simplifying previous configurations. For a complete understanding of the service installation flow using the provided scripts, please refer to the forthcoming detailed guide.
-
-
-Please note that detailed instructions for updating the service installation executable and related scripts are not included in this document. This aspect of the installation is out of the scope for user steps; users will only need to specify the service name. All other configuration and installation details will be handled internally by the provided scripts.
-
-The 
-
-This is what we are looking at
-
-http://www.directpluspro.compaq.com/printconfig.asp? bi-E9CED&depqsid=1DMLAVWF98592G2N00AKHB60TV7UASHF&BEID-19701
-
-We are planning to purchase two of these (identical of course). We plan to have one mirror the other so the we can balance the load, and also that (in the event of a problem) one can function independent of the other... the idea the we can literally shut one down without the web site going down is exciting... also, being able to upgrade by simply slapping in a new "pizza box" is quite intriguing...
-
-
-purpose of this document is to ensure a smooth installation and setup process by reflecting the latest changes and simplifying previous configurations. For comprehensive guidance on the service installation flow, including script-related details, please refer to the forthcoming detailed guide
-
-
-
-
-
-
-
-# Define your static credentials
-$username = "yourusername@yourtenant.com"
-$password = "yourpassword"
-
-# Create the PSCredential object
-$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
-$creds = New-Object System.Management.Automation.PSCredential ($username, $securePassword)
-
-# Connect to SharePoint Online using PnP PowerShell and the static credentials
-$siteUrl = "https://yourtenantname.sharepoint.com/sites/yoursite"
-Connect-PnPOnline -Url $siteUrl -Credentials $creds
-
-# Access the Preservation Hold Library (you might want to specify the correct name if it's different)
-$preservationHoldLibrary = Get-PnPList -Identity "Preservation Hold Library"
-
-# Define the file you want to retrieve
-$fileName = "YourFileName.ext"  # Specify the file name you're interested in
-
-# Get the specific file from the Preservation Hold Library
-$file = Get-PnPListItem -List $preservationHoldLibrary | Where-Object { $_["FileLeafRef"] -eq $fileName }
-
-# Print details about the file (metadata)
-if ($file) {
-    Write-Host "File Name: $($file['FileLeafRef'])"
-    Write-Host "File Title: $($file['Title'])"
-    Write-Host "Modified: $($file['Modified'])"
-    Write-Host "File Size: $($file['File_x0020_Size']) bytes"
-} else {
-    Write-Host "File not found in Preservation Hold Library."
-}
-
-# Optionally, print the file content (as text) - for files that can be interpreted as text (like .txt or .log files)
-$fileContent = Get-PnPFile -ServerRelativeUrl $file["FileRef"] -AsString -Force
-Write-Host "File Content: $fileContent"
-
-# Disconnect from SharePoint
-Disconnect-PnPOnline
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
------------------------------
-import asyncio
-import httpx
-import time
-from statistics import mean, stdev
-
-# Configuration
-URL = "http://localhost:8000/simulate"
-TOTAL_REQUESTS = 50
-CONCURRENT_CLIENTS = 20
-
-# Tracking
-response_times = []
-success_count = 0
-fail_count = 0
-
-
-async def fetch(client, url, idx):
-    global success_count, fail_count
-    try:
-        start = time.perf_counter()
-        response = await client.get(url)
-        duration = time.perf_counter() - start
-        response_times.append(duration)
-
-        if response.status_code == 200:
-            success_count += 1
-        else:
-            fail_count += 1
+        with file_path.open('r', encoding='utf-8') as f:
+            return f.read()
     except Exception as e:
-        fail_count += 1
+        logging.error(f"Failed to read {file_path.name}: {e}")
+        return ""
 
 
-async def run_load_test():
-    connector_limits = httpx.Limits(max_connections=CONCURRENT_CLIENTS)
-    async with httpx.AsyncClient(limits=connector_limits, timeout=15.0) as client:
-        tasks = [fetch(client, URL, i) for i in range(TOTAL_REQUESTS)]
-        await asyncio.gather(*tasks)
+def chunk_text(content: str, chunk_size: int) -> List[str]:
+    words = content.split()
+    return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
 
 
-def print_summary():
-    print("\n=== Load Test Summary ===")
-    print(f"URL: {URL}")
-    print(f"Total Requests: {TOTAL_REQUESTS}")
-    print(f"Concurrent Clients: {CONCURRENT_CLIENTS}")
-    print(f"Successful Responses: {success_count}")
-    print(f"Failed Responses: {fail_count}")
+def send_chunk_to_api(chunk: str) -> Dict:
+    try:
+        response = requests.post(API_ENDPOINT, data={"q": chunk})
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        logging.error(f"API request failed: {e}")
+        return {}  # You may choose to raise or retry
 
-    if response_times:
-        print(f"Average Response Time: {mean(response_times):.3f} seconds")
-        print(f"Min Response Time: {min(response_times):.3f} seconds")
-        print(f"Max Response Time: {max(response_times):.3f} seconds")
-        if len(response_times) > 1:
-            print(f"Standard Deviation: {stdev(response_times):.3f}")
-    print("==========================\n")
 
+def merge_json_responses(responses: List[Dict]) -> Dict:
+    merged = {}
+    for response in responses:
+        for key, value in response.items():
+            if key not in merged:
+                merged[key] = value
+            else:
+                # If duplicate key, merge values assuming they are list-like
+                if isinstance(merged[key], list) and isinstance(value, list):
+                    merged[key].extend(value)
+                elif isinstance(merged[key], dict) and isinstance(value, dict):
+                    merged[key].update(value)
+                else:
+                    # Overwrite or log conflict
+                    logging.warning(f"Key conflict at '{key}' – Overwriting.")
+                    merged[key] = value
+    return merged
+
+
+# ------------------- Main Logic -------------------
+
+def process_all_documents(input_folder: str, chunk_size: int, output_csv: str):
+    results = []
+    folder = Path(input_folder)
+
+    if not folder.exists():
+        logging.error(f"Input folder '{input_folder}' not found.")
+        return
+
+    for file_path in folder.glob("*.txt"):
+        logging.info(f"Processing file: {file_path.name}")
+        content = read_text_file(file_path)
+        if not content:
+            continue
+
+        chunks = chunk_text(content, chunk_size)
+        json_responses = []
+
+        for i, chunk in enumerate(chunks):
+            logging.info(f"Sending chunk {i + 1}/{len(chunks)}")
+            json_response = send_chunk_to_api(chunk)
+            if json_response:
+                json_responses.append(json_response)
+
+        if not json_responses:
+            logging.warning(f"No responses received for {file_path.name}")
+            continue
+
+        merged_response = merge_json_responses(json_responses)
+        results.append({
+            "document": file_path.name,
+            "PII": json.dumps(merged_response)
+        })
+
+    write_csv(output_csv, results)
+
+
+def write_csv(output_file: str, data: List[Dict[str, str]]):
+    try:
+        with open(output_file, mode='w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=["document", "PII"])
+            writer.writeheader()
+            writer.writerows(data)
+        logging.info(f"CSV output written to {output_file}")
+    except Exception as e:
+        logging.error(f"Failed to write CSV: {e}")
+
+
+# ------------------- Entry Point -------------------
 
 if __name__ == "__main__":
-    start_time = time.perf_counter()
-    asyncio.run(run_load_test())
-    print_summary()
-    total_duration = time.perf_counter() - start_time
-    print(f"Total Test Duration: {total_duration:.2f} seconds\n")
-
-
-import os
-
-# Create directory for output files
-OUTPUT_DIR = "responses"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-async def fetch(client, url, idx):
-    global success_count, fail_count
-    try:
-        start = time.perf_counter()
-        response = await client.get(url)
-        duration = time.perf_counter() - start
-        response_times.append(duration)
-
-        if response.status_code == 200:
-            success_count += 1
-        else:
-            fail_count += 1
-
-        # Write response content to a file
-        filename = os.path.join(OUTPUT_DIR, f"response_{idx}.txt")
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(f"Status: {response.status_code}\n")
-            f.write(f"Duration: {duration:.3f} seconds\n")
-            f.write("Body:\n")
-            f.write(response.text)
-
-    except Exception as e:
-        fail_count += 1
-        filename = os.path.join(OUTPUT_DIR, f"response_{idx}_error.txt")
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(f"Error on request {idx}: {str(e)}\n")
+    process_all_documents(INPUT_FOLDER, CHUNK_SIZE, OUTPUT_CSV)
 
 
 
@@ -898,11 +131,6 @@ async def fetch(client, url, idx):
 
 
 
-python -m vllm.entrypoints.openai.api_server \
-  --model meta-llama/Llama-3.1-8B-Instruct \
-  --kv-transfer-connector LMCacheConnectorV1 \
-  --kv-role kv_both \
-  --max-model-len 8192
 
 export LMCACHE_USE_EXPERIMENTAL=True
 export LMCACHE_CHUNK_SIZE=256
