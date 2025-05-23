@@ -1,160 +1,28 @@
-import os
-import json
-import csv
-import logging
-import requests
-from pathlib import Path
-from typing import List, Dict
+import asyncio
+import aiohttp
 
-# ------------------- Configuration -------------------
-CHUNK_SIZE = 1000  # Number of words per chunk
-INPUT_FOLDER = "input_texts"  # Folder containing .txt files
-OUTPUT_CSV = "output.csv"
-API_ENDPOINT = "https://example.com/api/pii"  # Replace with real URL
+URL = "http://localhost:8000/v1"
+PARAMS = {"q": "who are you?"}
+NUM_REQUESTS = 100
 
-# ------------------- Logging Setup -------------------
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-
-
-# ------------------- Helper Functions -------------------
-
-def read_text_file(file_path: Path) -> str:
+async def send_post(session, i):
     try:
-        with file_path.open('r', encoding='utf-8') as f:
-            return f.read()
+        async with session.post(URL, params=PARAMS) as resp:
+            result = await resp.text()
+            return (i, result)
     except Exception as e:
-        logging.error(f"Failed to read {file_path.name}: {e}")
-        return ""
+        return (i, f"Error: {e}")
 
-
-def chunk_text(content: str, chunk_size: int) -> List[str]:
-    words = content.split()
-    return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
-
-
-def send_chunk_to_api(chunk: str) -> Dict:
-    try:
-        response = requests.post(API_ENDPOINT, data={"q": chunk})
-        response.raise_for_status()
-        return response.json()
-    except Exception as e:
-        logging.error(f"API request failed: {e}")
-        return {}  # You may choose to raise or retry
-
-
-def merge_json_responses(responses: List[Dict]) -> Dict:
-    merged = {}
-    for response in responses:
-        for key, value in response.items():
-            if key not in merged:
-                merged[key] = value
-            else:
-                # If duplicate key, merge values assuming they are list-like
-                if isinstance(merged[key], list) and isinstance(value, list):
-                    merged[key].extend(value)
-                elif isinstance(merged[key], dict) and isinstance(value, dict):
-                    merged[key].update(value)
-                else:
-                    # Overwrite or log conflict
-                    logging.warning(f"Key conflict at '{key}' – Overwriting.")
-                    merged[key] = value
-    return merged
-
-
-# ------------------- Main Logic -------------------
-
-def process_all_documents(input_folder: str, chunk_size: int, output_csv: str):
-    results = []
-    folder = Path(input_folder)
-
-    if not folder.exists():
-        logging.error(f"Input folder '{input_folder}' not found.")
-        return
-
-    for file_path in folder.glob("*.txt"):
-        logging.info(f"Processing file: {file_path.name}")
-        content = read_text_file(file_path)
-        if not content:
-            continue
-
-        chunks = chunk_text(content, chunk_size)
-        json_responses = []
-
-        for i, chunk in enumerate(chunks):
-            logging.info(f"Sending chunk {i + 1}/{len(chunks)}")
-            json_response = send_chunk_to_api(chunk)
-            if json_response:
-                json_responses.append(json_response)
-
-        if not json_responses:
-            logging.warning(f"No responses received for {file_path.name}")
-            continue
-
-        merged_response = merge_json_responses(json_responses)
-        results.append({
-            "document": file_path.name,
-            "PII": json.dumps(merged_response)
-        })
-
-    write_csv(output_csv, results)
-
-
-def write_csv(output_file: str, data: List[Dict[str, str]]):
-    try:
-        with open(output_file, mode='w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=["document", "PII"])
-            writer.writeheader()
-            writer.writerows(data)
-        logging.info(f"CSV output written to {output_file}")
-    except Exception as e:
-        logging.error(f"Failed to write CSV: {e}")
-
-
-# ------------------- Entry Point -------------------
+async def main():
+    async with aiohttp.ClientSession() as session:
+        tasks = [send_post(session, i) for i in range(NUM_REQUESTS)]
+        results = await asyncio.gather(*tasks)
+        return results
 
 if __name__ == "__main__":
-    process_all_documents(INPUT_FOLDER, CHUNK_SIZE, OUTPUT_CSV)
+    results = asyncio.run(main())
 
-
-
-
-def chunk_text_by_lines(content: str, chunk_size: int) -> List[str]:
-    lines = content.splitlines()
-    return ['\n'.join(lines[i:i + chunk_size]) for i in range(0, len(lines), chunk_size)]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export LMCACHE_USE_EXPERIMENTAL=True
-export LMCACHE_CHUNK_SIZE=256
-export LMCACHE_LOCAL_CPU=True
-export LMCACHE_MAX_LOCAL_CPU_SIZE=5.0
-
-python -m vllm.entrypoints.openai.api_server \
-  --model meta-llama/Llama-3.1-8B-Instruct \
-  --kv-transfer-connector LMCacheConnectorV1 \
-  --kv-role kv_both \
-  --max-model-len 8192 \
-  --gpu-memory-utilization 0.85
-
-
-export LMCACHE_USE_EXPERIMENTAL=True
-# 256 Tokens per KV Chunk
-export LMCACHE_CHUNK_SIZE=256
-# Enable CPU memory backend
-export LMCACHE_LOCAL_CPU=True # default
-# 5GB of Pinned CPU memory
-export LMCACHE_MAX_LOCAL_CPU_SIZE=5.0 # default
-
-
-'{"kv_connector":"LMCacheConnectorV1", "kv_role":"kv_both"}'
+    # Optional: sort and print
+    results.sort()
+    for idx, res in results:
+        print(f"[{idx}] {res}")
