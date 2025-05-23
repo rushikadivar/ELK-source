@@ -1,28 +1,11 @@
-import asyncio
-import aiohttp
+def run_requests(num_requests=NUM_REQUESTS, max_workers=MAX_WORKERS):
+    results = []
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Submit all jobs
+        futures = [executor.submit(send_post, i) for i in range(num_requests)]
+        
+        # Collect results as they complete
+        for future in as_completed(futures):
+            results.append(future.result())
 
-URL = "http://localhost:8000/v1"
-PARAMS = {"q": "who are you?"}
-NUM_REQUESTS = 100
-
-async def send_post(session, i):
-    try:
-        async with session.post(URL, params=PARAMS) as resp:
-            result = await resp.text()
-            return (i, result)
-    except Exception as e:
-        return (i, f"Error: {e}")
-
-async def main():
-    async with aiohttp.ClientSession() as session:
-        tasks = [send_post(session, i) for i in range(NUM_REQUESTS)]
-        results = await asyncio.gather(*tasks)
-        return results
-
-if __name__ == "__main__":
-    results = asyncio.run(main())
-
-    # Optional: sort and print
-    results.sort()
-    for idx, res in results:
-        print(f"[{idx}] {res}")
+    return results
