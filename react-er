@@ -38,8 +38,23 @@ $PYTHON "$APP_DIR/app/run_fastapi.py" > "$LOG_DIR/app.log" 2>&1
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
+[Unit]
+Description=Custom FastAPI + vLLM Service
+After=network.target
 
+[Service]
+Type=simple
+ExecStart=/opt/myapp/start_services.sh
+Restart=on-failure
+User=ubuntu
+WorkingDirectory=/opt/myapp
+StandardOutput=journal
+StandardError=journal
 
+[Install]
+WantedBy=multi-user.target
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
 # Reload systemd to register the new service
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
