@@ -1,11 +1,52 @@
-def run_requests(num_requests=NUM_REQUESTS, max_workers=MAX_WORKERS):
-    results = []
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        # Submit all jobs
-        futures = [executor.submit(send_post, i) for i in range(num_requests)]
-        
-        # Collect results as they complete
-        for future in as_completed(futures):
-            results.append(future.result())
+#!/bin/bash
+set -e
 
-    return results
+APP_DIR="/opt/myapp"
+PYTHON="$APP_DIR/bin/python"
+SITE_PACKAGES="$APP_DIR/lib/python3.x/site-packages"
+export PYTHONPATH="$SITE_PACKAGES"
+
+LOG_DIR="/var/log/myapp"
+mkdir -p "$LOG_DIR"
+
+# Start vLLM in background
+echo "Starting vLLM..."
+$PYTHON -m vllm.entrypoints.openai.api_server > "$LOG_DIR/vllm.log" 2>&1 &
+VLLM_PID=$!
+
+# Wait until vLLM is up (timeout after 30 seconds)
+echo "Waiting for vLLM to become ready..."
+for i in {1..30}; do
+    if curl -s http://localhost:8000/v1/models > /dev/null; then
+        echo "vLLM is up!"
+        break
+    fi
+    echo "Waiting... ($i)"
+    sleep 1
+done
+
+# Check if it failed after 30 tries
+if ! curl -s http://localhost:8000/v1/models > /dev/null; then
+    echo "vLLM did not start successfully. Exiting."
+    kill "$VLLM_PID"
+    exit 1
+fi
+
+# Start your FastAPI app
+echo "Starting FastAPI app..."
+$PYTHON "$APP_DIR/app/run_fastapi.py" > "$LOG_DIR/app.log" 2>&1
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# Reload systemd to register the new service
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+
+# Enable and start your service
+sudo systemctl enable myapp.service
+sudo systemctl start myapp.service
+
+# Check status
+sudo systemctl status myapp.service
